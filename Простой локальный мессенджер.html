@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Простой локальный мессенджер</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        #chat {
+            border: 1px solid #ccc;
+            padding: 10px;
+            background: white;
+            height: 300px;
+            overflow-y: scroll;
+        }
+        #message {
+            width: 80%;
+            padding: 10px;
+        }
+        #send {
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Простой локальный мессенджер</h1>
+    <input type="text" id="userNumber" placeholder="Введите ваш номер" />
+    <div id="chat"></div>
+    <input type="text" id="message" placeholder="Введите сообщение" />
+    <button id="send">Отправить</button>
+
+    <script>
+        const chat = document.getElementById('chat');
+        const messageInput = document.getElementById('message');
+        const userNumberInput = document.getElementById('userNumber');
+        const sendButton = document.getElementById('send');
+
+        const loadMessages = () => {
+            const messages = JSON.parse(localStorage.getItem('messages')) || [];
+            chat.innerHTML = '';
+            messages.forEach(msg => {
+                const msgElement = document.createElement('div');
+                msgElement.textContent = `Пользователь ${msg.number}: ${msg.text}`;
+                chat.appendChild(msgElement);
+            });
+        };
+
+        const saveMessage = (number, text) => {
+            const messages = JSON.parse(localStorage.getItem('messages')) || [];
+            messages.push({ number, text });
+            localStorage.setItem('messages', JSON.stringify(messages));
+        };
+
+        sendButton.addEventListener('click', () => {
+            const message = messageInput.value;
+            const userNumber = userNumberInput.value;
+
+            if (message && userNumber) {
+                saveMessage(userNumber, message);
+                messageInput.value = '';
+                loadMessages();
+            } else {
+                alert('Пожалуйста, введите номер и сообщение.');
+            }
+        });
+
+        // Сброс сообщений раз в день
+        const resetMessagesDaily = () => {
+            const lastReset = localStorage.getItem('lastReset');
+            const now = new Date();
+
+            if (!lastReset || (now - new Date(lastReset)) > 24 * 60 * 60 * 1000) {
+                localStorage.removeItem('messages');
+                localStorage.setItem('lastReset', now);
+            }
+        };
+
+        resetMessagesDaily();
+        loadMessages(); // Начальная загрузка сообщений
+    </script>
+</body>
+</html>
