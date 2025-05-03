@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Простой мессенджер</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        #chat {
+            border: 1px solid #ccc;
+            padding: 10px;
+            background: white;
+            height: 300px;
+            overflow-y: scroll;
+        }
+        #message {
+            width: 80%;
+            padding: 10px;
+        }
+        #send {
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Простой мессенджер</h1>
+    <input type="text" id="userNumber" placeholder="Введите ваш номер" />
+    <div id="chat"></div>
+    <input type="text" id="message" placeholder="Введите сообщение" />
+    <button id="send">Отправить</button>
+
+    <script>
+        const chat = document.getElementById('chat');
+        const messageInput = document.getElementById('message');
+        const userNumberInput = document.getElementById('userNumber');
+        const sendButton = document.getElementById('send');
+
+        sendButton.addEventListener('click', () => {
+            const message = messageInput.value;
+            const userNumber = userNumberInput.value;
+
+            if (message && userNumber) {
+                const msgElement = document.createElement('div');
+                msgElement.textContent = `Пользователь ${userNumber}: ${message}`;
+                chat.appendChild(msgElement);
+                messageInput.value = '';
+            } else {
+                alert('Пожалуйста, введите номер и сообщение.');
+            }
+        });
+    </script>
+</body>
+</html>
