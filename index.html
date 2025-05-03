@@ -3,85 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>anonim</title>
+    <title>Мой Сайт с Чатом</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
             padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
         }
-        #chat {
+        .dark-theme {
+            background-color: #333;
+            color: white;
+        }
+        button {
+            padding: 10px;
+            margin: 5px;
+        }
+        #messages {
             border: 1px solid #ccc;
             padding: 10px;
             background: white;
             height: 300px;
             overflow-y: scroll;
-        }
-        #message {
-            width: 80%;
-            padding: 10px;
-        }
-        #send {
-            padding: 10px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>anonim</h1>
-    <input type="text" id="userNumber" placeholder="Введите ваш номер" />
-    <div id="chat"></div>
-    <input type="text" id="message" placeholder="Введите сообщение" />
-    <button id="send">go!</button>
+    <h1>Добро пожаловать на мой сайт!</h1>
+    <p>Это пример сайта с чатом.</p>
+
+    <h2>Отправить сообщение</h2>
+    <input type="text" id="userMessage" placeholder="Введите ваше сообщение" />
+    <button id="sendMessage">Отправить</button>
+
+    <h2>Сообщения</h2>
+    <div id="messages"></div>
 
     <script>
-        const chat = document.getElementById('chat');
-        const messageInput = document.getElementById('message');
-        const userNumberInput = document.getElementById('userNumber');
-        const sendButton = document.getElementById('send');
+        const messagesDiv = document.getElementById('messages');
+        const sendMessageButton = document.getElementById('sendMessage');
+        const userMessageInput = document.getElementById('userMessage');
 
+        // Функция для загрузки сообщений и фотографий
         const loadMessages = () => {
             const messages = JSON.parse(localStorage.getItem('messages')) || [];
-            chat.innerHTML = '';
-            messages.forEach(msg => {
+            const photos = JSON.parse(localStorage.getItem('photos')) || [];
+            messagesDiv.innerHTML = '';
+
+            messages.forEach((msg, index) => {
                 const msgElement = document.createElement('div');
                 msgElement.textContent = `Пользователь ${msg.number}: ${msg.text}`;
-                chat.appendChild(msgElement);
+                messagesDiv.appendChild(msgElement);
+            });
+
+            // Отображение загруженных фотографий
+            photos.forEach(photo => {
+                const imgElement = document.createElement('img');
+                imgElement.src = photo;
+                imgElement.style.width = '100px';
+                imgElement.style.margin = '5px';
+                messagesDiv.appendChild(imgElement);
             });
         };
 
-        const saveMessage = (number, text) => {
-            const messages = JSON.parse(localStorage.getItem('messages')) || [];
-            messages.push({ number, text });
-            localStorage.setItem('messages', JSON.stringify(messages));
-        };
-
-        sendButton.addEventListener('click', () => {
-            const message = messageInput.value;
-            const userNumber = userNumberInput.value;
-
-            if (message && userNumber) {
-                saveMessage(userNumber, message);
-                messageInput.value = '';
+        // Отправка сообщения
+        sendMessageButton.addEventListener('click', () => {
+            const message = userMessageInput.value;
+            if (message) {
+                const messages = JSON.parse(localStorage.getItem('messages')) || [];
+                messages.push({ number: 'Пользователь', text: message });
+                localStorage.setItem('messages', JSON.stringify(messages));
+                userMessageInput.value = '';
                 loadMessages();
             } else {
-                alert('Пожалуйста, введите номер и сообщение.');
+                alert('Пожалуйста, введите сообщение.');
             }
         });
 
-        // Сброс сообщений раз в день
-        const resetMessagesDaily = () => {
-            const lastReset = localStorage.getItem('lastReset');
-            const now = new Date();
-
-            if (!lastReset || (now - new Date(lastReset)) > 24 * 60 * 60 * 1000) {
-                localStorage.removeItem('messages');
-                localStorage.setItem('lastReset', now);
-            }
-        };
-
-        resetMessagesDaily();
-        loadMessages(); // Начальная загрузка сообщений
+        // Загрузка сообщений и фотографий при загрузке страницы
+        loadMessages();
     </script>
 </body>
 </html>
