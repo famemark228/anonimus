@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>anonimus</title>
+    <title>Мой Сайт с Чатом</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -31,12 +31,17 @@
     </style>
 </head>
 <body>
-    <h1>anonim</h1>
-    <p>?.</p>
+    <h1>Добро пожаловать на мой сайт!</h1>
+    <p>Это пример сайта с чатом.</p>
+
+    <h2>Создать новый код для себя</h2>
+    <input type="text" id="userName" placeholder="Введите ваше имя" />
+    <button id="generateCode">Создать код</button>
+    <p id="userCode"></p>
 
     <h2>Отправить сообщение</h2>
     <input type="text" id="userMessage" placeholder="Введите ваше сообщение" />
-    <button id="sendMessage">go!</button>
+    <button id="sendMessage">Отправить</button>
 
     <h2>Сообщения</h2>
     <div id="messages"></div>
@@ -45,35 +50,50 @@
         const messagesDiv = document.getElementById('messages');
         const sendMessageButton = document.getElementById('sendMessage');
         const userMessageInput = document.getElementById('userMessage');
+        const generateCodeButton = document.getElementById('generateCode');
+        const userCodeDisplay = document.getElementById('userCode');
+        const userNameInput = document.getElementById('userName');
 
-        // Функция для загрузки сообщений и фотографий
+        // Генерация случайного кода
+        const generateRandomCode = () => {
+            return Math.random().toString(36).substring(2, 8).toUpperCase();
+        };
+
+        // Функция для загрузки сообщений
         const loadMessages = () => {
             const messages = JSON.parse(localStorage.getItem('messages')) || [];
-            const photos = JSON.parse(localStorage.getItem('photos')) || [];
             messagesDiv.innerHTML = '';
 
-            messages.forEach((msg, index) => {
+            messages.forEach(msg => {
                 const msgElement = document.createElement('div');
                 msgElement.textContent = `Пользователь ${msg.number}: ${msg.text}`;
                 messagesDiv.appendChild(msgElement);
             });
-
-            // Отображение загруженных фотографий
-            photos.forEach(photo => {
-                const imgElement = document.createElement('img');
-                imgElement.src = photo;
-                imgElement.style.width = '100px';
-                imgElement.style.margin = '5px';
-                messagesDiv.appendChild(imgElement);
-            });
         };
+
+        // Генерация кода для пользователя
+        generateCodeButton.addEventListener('click', () => {
+            const userName = userNameInput.value;
+            if (userName) {
+                const userCode = generateRandomCode();
+                userCodeDisplay.textContent = `Ваш код: ${userCode}`;
+                
+                // Сохранение кода
+                const users = JSON.parse(localStorage.getItem('users')) || {};
+                users[userName] = userCode;
+                localStorage.setItem('users', JSON.stringify(users));
+            } else {
+                alert('Пожалуйста, введите ваше имя.');
+            }
+        });
 
         // Отправка сообщения
         sendMessageButton.addEventListener('click', () => {
             const message = userMessageInput.value;
             if (message) {
+                const userName = userNameInput.value || 'Аноним';
                 const messages = JSON.parse(localStorage.getItem('messages')) || [];
-                messages.push({ number: 'Пользователь', text: message });
+                messages.push({ number: userName, text: message });
                 localStorage.setItem('messages', JSON.stringify(messages));
                 userMessageInput.value = '';
                 loadMessages();
@@ -82,7 +102,7 @@
             }
         });
 
-        // Загрузка сообщений и фотографий при загрузке страницы
+        // Загрузка сообщений при загрузке страницы
         loadMessages();
     </script>
 </body>
