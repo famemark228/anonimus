@@ -3,14 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>anonim</title>
+    <title>anonimus</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
             padding: 20px;
-            transition: background-color 0.3s, color 0.3s;
+            display: flex;
+        }
+        .content {
+            flex: 1;
+        }
+        .sidebar {
+            width: 200px;
+            margin-left: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background: white;
         }
         .dark-theme {
             background-color: #333;
@@ -28,23 +38,34 @@
             overflow-y: scroll;
             margin-bottom: 10px;
         }
+        img {
+            width: 100px;
+            margin: 5px;
+        }
     </style>
 </head>
 <body>
-    <h1>anonim</h1>
-    <p>переписывайтесь</p>
+    <div class="content">
+        <h1>anonim</h1>
+        <p>переписывайтесь</p>
 
-    <h2>Создать новый код для себя</h2>
-    <input type="text" id="userName" placeholder="Введите ваше имя" />
-    <button id="generateCode">Создать код</button>
-    <p id="userCode"></p>
+        <h2>Создать новый код для себя</h2>
+        <input type="text" id="userName" placeholder="Введите ваше имя" />
+        <button id="generateCode">Создать код</button>
+        <p id="userCode"></p>
 
-    <h2>Отправить сообщение</h2>
-    <input type="text" id="userMessage" placeholder="Введите ваше сообщение" />
-    <button id="sendMessage">Отправить</button>
+        <h2>Отправить сообщение</h2>
+        <input type="text" id="userMessage" placeholder="Введите ваше сообщение" />
+        <button id="sendMessage">Отправить</button>
 
-    <h2>Сообщения</h2>
-    <div id="messages"></div>
+        <h2>Сообщения</h2>
+        <div id="messages"></div>
+    </div>
+
+    <div class="sidebar">
+        <h2>Загруженные фотографии</h2>
+        <div id="photos"></div>
+    </div>
 
     <script>
         const messagesDiv = document.getElementById('messages');
@@ -53,6 +74,7 @@
         const generateCodeButton = document.getElementById('generateCode');
         const userCodeDisplay = document.getElementById('userCode');
         const userNameInput = document.getElementById('userName');
+        const photosDiv = document.getElementById('photos');
 
         // Генерация случайного кода
         const generateRandomCode = () => {
@@ -68,6 +90,18 @@
                 const msgElement = document.createElement('div');
                 msgElement.textContent = `Пользователь ${msg.number}: ${msg.text}`;
                 messagesDiv.appendChild(msgElement);
+            });
+        };
+
+        // Функция для загрузки фотографий
+        const loadPhotos = () => {
+            const photos = JSON.parse(localStorage.getItem('photos')) || [];
+            photosDiv.innerHTML = '';
+
+            photos.forEach(photo => {
+                const imgElement = document.createElement('img');
+                imgElement.src = photo;
+                photosDiv.appendChild(imgElement);
             });
         };
 
@@ -102,8 +136,9 @@
             }
         });
 
-        // Загрузка сообщений при загрузке страницы
+        // Загрузка сообщений и фотографий при загрузке страницы
         loadMessages();
+        loadPhotos();
     </script>
 </body>
 </html>
